@@ -11,7 +11,7 @@ export const Soldier = (x, y, canvas) => {
   return new Unit({
     health: 100,
     damage: 20,
-    moveSpeed: 5,
+    moveSpeed: 2,
     range: 30,
     positionX: x,
     positionY: y,

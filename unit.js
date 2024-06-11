@@ -255,9 +255,9 @@ class UnitRenderer {
       this.enemies.push(
         Orc(this.mapPoint[3].x, this.mapPoint[3].y, this.canvas)
       );
-      this.units.push(
-        Soldier(this.mapPoint[0].x, this.mapPoint[0].y, this.canvas)
-      );
+      // this.units.push(
+      //   Soldier(this.mapPoint[0].x, this.mapPoint[0].y, this.canvas)
+      // );
     }
     this.timer += 1;
     this.units.forEach((unit) => {

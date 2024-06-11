@@ -11,11 +11,11 @@ export const Orc = (x, y, canvas) => {
   return new Unit({
     health: 50,
     damage: 15,
-    moveSpeed: 5,
+    moveSpeed: 2,
     range: 30,
     positionX: x,
     positionY: y,
-    atkSpeed: 60,
+    atkSpeed: 80,
     currentPosition: 2,
     images: {
       walk: new UnitImage({
