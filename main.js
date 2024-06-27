@@ -33,5 +33,6 @@ const renderer = new TetrisRenderer(
     console.log("good!");
   }
 );
+map.init();
 map.run();
 renderer.run();

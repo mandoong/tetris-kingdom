@@ -1,3 +1,5 @@
+import { EvilCastle } from "./castle/evil.js";
+import { UserCastle } from "./castle/user.js";
 import { Orc } from "./units/orc.js";
 import { Skeleton } from "./units/skeleton.js";
 import { Soldier } from "./units/soldier.js";
@@ -151,17 +153,38 @@ class Unit {
 }
 
 class Castle {
-  constructor({ health = 1000, x, y, recovery = 10 }) {
+  constructor({ health = 1000, recovery = 10, image, x, y }) {
     this.health = health;
-    this.x = x;
-    this.y = y;
     this.recovery = recovery;
+    this.image = image;
   }
 
   hewathRecovery(timer) {
     if (timer % 100 === 0) {
       this.health += this.recovery;
     }
+  }
+}
+
+class TileImage {
+  constructor({ image, tx, ty, x, y }) {
+    const img = new Image();
+    img.src = image;
+
+    const _x = img.width / tx;
+    const _y = img.height / ty;
+
+    this.x = _x * x;
+    this.y = _y * y;
+    this.w = _x;
+    this.h = _y;
+    this.image = img;
+  }
+
+  draw(x, y, w, h, canvas) {
+    const context = canvas.getContext("2d");
+
+    context.drawImage(this.image, this.x, this.y, this.w, this.h, x, y, w, h);
   }
 }
 class UnitImage {
@@ -248,6 +271,12 @@ class UnitRenderer {
     this.timer = 0;
     this.images = images;
     this.renderCount = 0;
+    this.castle = {};
+  }
+
+  init() {
+    this.castle.evil = EvilCastle({ recovery: 1, health: 1000 });
+    this.castle.user = UserCastle({ recovery: 1, health: 1000 });
   }
 
   run() {
@@ -349,6 +378,21 @@ class UnitRenderer {
       enemy.render(this.timer, true);
       this.healthRender(enemy);
     });
+
+    this.castle.user.image.draw(
+      this.mapPoint[0].x - this.castle.evil.image.w,
+      this.mapPoint[0].y,
+      60,
+      80,
+      this.canvas
+    );
+    this.castle.evil.image.draw(
+      this.mapPoint[3].x - this.castle.evil.image.w,
+      this.mapPoint[3].y,
+      60,
+      80,
+      this.canvas
+    );
   }
 
   addUnit(level, combo) {
@@ -358,4 +402,4 @@ class UnitRenderer {
   }
 }
 
-export { Unit, UnitImage, UnitRenderer, Castle };
+export { Unit, UnitImage, UnitRenderer, Castle, TileImage };
