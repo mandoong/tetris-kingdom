@@ -209,11 +209,17 @@ class TetrisRenderer {
       this.currentBlock.shape.forEach((row, y) => {
         row.forEach((cell, x) => {
           if (cell) {
-            context.fillRect(
+            const _x =
               ((this.currentBlock.x + x) * this.width) / this.cols +
-                this.padding,
+              this.padding;
+
+            const _y =
               ((this.currentBlock.y + y) * this.height) / this.rows +
-                this.padding,
+              this.padding;
+
+            context.fillRect(
+              _x,
+              _y,
               this.width / this.cols,
               this.height / this.rows
             );

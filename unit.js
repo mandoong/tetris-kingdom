@@ -1,5 +1,7 @@
 import { EvilCastle } from "./castle/evil.js";
 import { UserCastle } from "./castle/user.js";
+import { mainMap } from "./tile/mainMap.js";
+import Tile from "./tile/tile.js";
 import { Orc } from "./units/orc.js";
 import { Skeleton } from "./units/skeleton.js";
 import { Soldier } from "./units/soldier.js";
@@ -155,8 +157,11 @@ class Unit {
 class Castle {
   constructor({ health = 1000, recovery = 10, image, x, y }) {
     this.health = health;
+    this.totalHealth = health;
     this.recovery = recovery;
     this.image = image;
+    this.x = x;
+    this.y = y;
   }
 
   hewathRecovery(timer) {
@@ -272,11 +277,24 @@ class UnitRenderer {
     this.images = images;
     this.renderCount = 0;
     this.castle = {};
+    this.backgroud;
   }
 
   init() {
-    this.castle.evil = EvilCastle({ recovery: 1, health: 1000 });
-    this.castle.user = UserCastle({ recovery: 1, health: 1000 });
+    this.castle.evil = EvilCastle({
+      recovery: 1,
+      x: this.mapPoint[3].x,
+      y: this.mapPoint[3].y,
+      health: 500,
+    });
+    this.castle.user = UserCastle({
+      recovery: 1,
+      x: this.mapPoint[0].x,
+      y: this.mapPoint[0].y,
+      health: 500,
+    });
+
+    this.backgroud = mainMap;
   }
 
   run() {
@@ -303,6 +321,17 @@ class UnitRenderer {
         });
 
         if (target) unit.target = target;
+        else {
+          const c = this.castle.evil;
+          if (
+            Math.abs(this.mapPoint[3].x - unit.position.x) +
+              Math.abs(this.mapPoint[3].y - unit.position.y) <=
+              unit.range &&
+            c.health > 0
+          ) {
+            unit.target = this.castle.evil;
+          }
+        }
       }
 
       if (unit.target) {
@@ -328,6 +357,20 @@ class UnitRenderer {
         });
 
         if (target) enemy.target = target;
+        else {
+          const c = this.castle.user;
+
+          if (
+            Math.abs(this.mapPoint[0].x - enemy.position.x) +
+              Math.abs(this.mapPoint[0].y - enemy.position.y) <=
+              enemy.range &&
+            c.health > 0
+          ) {
+            console.log(c);
+
+            enemy.target = this.castle.user;
+          }
+        }
       }
 
       if (enemy.target) {
@@ -359,13 +402,39 @@ class UnitRenderer {
     );
   }
 
+  castleHealthRender(castle) {
+    const context = this.canvas.getContext("2d");
+    context.fillStyle = "rgb(100, 100, 100)";
+
+    console.log(castle);
+    context.fillRect(castle.x - 30, castle.y, 60, 5);
+
+    context.fillStyle = "rgb(255, 100, 100)";
+    context.fillRect(
+      castle.x - 30,
+      castle.y,
+      Math.max(60 * (castle.health / castle.totalHealth), 0),
+      5
+    );
+  }
+
   render() {
     const context = this.canvas.getContext("2d");
 
-    const image = this.images[1];
-
     context.fillStyle = "rgb(150, 150, 150)";
     context.fillRect(0, 0, this.width, this.height);
+
+    const w = Math.floor(this.canvas.width / 26);
+    const h = Math.floor(this.canvas.height / 43);
+
+    for (let i = 0; i < this.backgroud.tile.length; i++) {
+      const line = this.backgroud.tile?.[i];
+
+      line.forEach((e, j) => {
+        const [y, x] = e;
+        this.backgroud.image.draw(x, y, j * w, i * h, w, h, this.canvas);
+      });
+    }
 
     this.units.forEach((unit) => {
       if (!unit) return;
@@ -386,6 +455,9 @@ class UnitRenderer {
       80,
       this.canvas
     );
+
+    this.castleHealthRender(this.castle.user);
+
     this.castle.evil.image.draw(
       this.mapPoint[3].x - this.castle.evil.image.w,
       this.mapPoint[3].y,
@@ -393,6 +465,8 @@ class UnitRenderer {
       80,
       this.canvas
     );
+
+    this.castleHealthRender(this.castle.evil);
   }
 
   addUnit(level, combo) {

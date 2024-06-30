@@ -8,7 +8,7 @@ image1.src = "./asset/unit/enemy/skeleton/Skeleton Walk.png";
 const canvas = document.getElementById("tetris");
 const width = 400;
 const height = 800;
-const padding = 100;
+const padding = 80;
 const map = new UnitRenderer({
   canvas,
   width: width + padding * 2,
