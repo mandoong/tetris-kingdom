@@ -366,8 +366,6 @@ class UnitRenderer {
               enemy.range &&
             c.health > 0
           ) {
-            console.log(c);
-
             enemy.target = this.castle.user;
           }
         }
@@ -405,8 +403,6 @@ class UnitRenderer {
   castleHealthRender(castle) {
     const context = this.canvas.getContext("2d");
     context.fillStyle = "rgb(100, 100, 100)";
-
-    console.log(castle);
     context.fillRect(castle.x - 30, castle.y, 60, 5);
 
     context.fillStyle = "rgb(255, 100, 100)";

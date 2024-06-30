@@ -30,7 +30,6 @@ const renderer = new TetrisRenderer(
   },
   () => {
     map.addUnit();
-    console.log("good!");
   }
 );
 map.init();

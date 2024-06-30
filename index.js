@@ -23,12 +23,12 @@ const blockTypes = [
 ];
 
 const typeToColor = {
-  0: "#F50104",
-  1: "#F86205",
-  2: "#F5F608",
-  3: "#007E03",
-  4: "#0600DB",
-  5: "#7D017D",
+  0: "./asset/tetris/red_block.png", // red
+  1: "./asset/tetris/cyan_block.png", // orange
+  2: "./asset/tetris/yellow_block.png", // y
+  3: "./asset/tetris/green_block.png", // g
+  4: "./asset/tetris/blue_block.png", // b
+  5: "./asset/tetris/purple_block.png", // p
 };
 
 class Block {
@@ -36,7 +36,11 @@ class Block {
     this.id = `${Date.now()}_${Math.random().toString(12)}`;
     this.x = x;
     this.y = y;
-    this.color = typeToColor[type];
+
+    const img = new Image();
+    img.src = typeToColor[type];
+    this.color = img;
+
     this.type = type;
     this.shape = blockTypes[type];
   }
@@ -176,10 +180,10 @@ class TetrisRenderer {
   render() {
     const context = this.canvas.getContext("2d");
 
-    context.fillStyle = "rgb(200, 200, 200)";
+    context.fillStyle = "rgb(30, 30, 50)";
     context.fillRect(this.padding, this.padding, this.width, this.height);
 
-    context.strokeStyle = "#fff";
+    context.strokeStyle = "rgb(100, 100, 100)";
     context.lineWidth = 1;
     for (let i = 0; i < this.rows; i++) {
       context.beginPath();
@@ -205,7 +209,6 @@ class TetrisRenderer {
     }
 
     if (this.currentBlock) {
-      context.fillStyle = this.currentBlock.color;
       this.currentBlock.shape.forEach((row, y) => {
         row.forEach((cell, x) => {
           if (cell) {
@@ -217,7 +220,8 @@ class TetrisRenderer {
               ((this.currentBlock.y + y) * this.height) / this.rows +
               this.padding;
 
-            context.fillRect(
+            context.drawImage(
+              this.currentBlock.color,
               _x,
               _y,
               this.width / this.cols,
@@ -231,8 +235,8 @@ class TetrisRenderer {
     this.board.filter(Boolean).forEach((color, y) => {
       this.board[y].forEach((color, x) => {
         if (color) {
-          context.fillStyle = color;
-          context.fillRect(
+          context.drawImage(
+            color,
             (x * this.width) / this.cols + this.padding,
             (y * this.height) / this.rows + this.padding,
             this.width / this.cols,
@@ -244,7 +248,6 @@ class TetrisRenderer {
   }
 
   handleKey(e) {
-    console.log(e);
     if (e.code === "Space") {
       while (this.canPlaceBlock(this.currentBlock, 0, 1)) {
         this.currentBlock.y++;
